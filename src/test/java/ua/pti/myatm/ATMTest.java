@@ -49,7 +49,7 @@ public class ATMTest {
 
     @Test
     public void testGetCash() {
-        System.out.println("getCash");
+        System.out.println("iampotato");
         double amount = 0.0;
         ATM instance = null;
         double expResult = 0.0;
