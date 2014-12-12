@@ -10,10 +10,11 @@ import static org.mockito.Mockito.*;
 public class ATMTest {
     @Test(expected = IllegalArgumentException.class)
     public void testSetMoneyWithNegativeValueInATMThrowsIllegalArgumentException()  {
+      
         new ATM(-1);
     }
-
-
+    
+    
     @Test
     public void testGetMoneyInATMExpectedEquals() {
         double actualMoney = 13.5;
@@ -85,7 +86,7 @@ public class ATMTest {
 
     }
 
-    @Test(expected = NoCardInsertedException.class)
+    @Test(expected = NoCardInserted.class)
       public void testCheckBalanceOtherResult() throws NoCardInserted {
         ATM atm = new ATM(1);
 
@@ -187,5 +188,38 @@ public class ATMTest {
         order.verify(account).withdrow(amount);
 
     }
+    
+    
+    @Test
+    public void testGetCashInOrderGetBalanceBeforeWithDraw() throws NoCardInserted, NotEnoughMoneyInATM, NotEnoughMoneyInAccount {
 
+        double amount = 321;
+        ATM atm = new ATM(1000);
+        Card card = mock(Card.class);
+        int pinCode = 1890;
+        Account account = mock(Account.class);
+        double actualValue = 1000;
+        when(account.getBalance()).thenReturn(actualValue);
+        when(card.getAccount()).thenReturn(account);
+        when(card.isBlocked()).thenReturn(false);
+        when(card.checkPin(pinCode)).thenReturn(true);
+        when(account.withdrow(amount)).thenReturn(amount);
+        atm.validateCard(card, pinCode);
+        atm.getCash(amount);
+        InOrder order = inOrder(account);
+        order.verify(account).getBalance();
+        order.verify(account).withdrow(amount);
+
+    }
+    
+     @Test(expected = IllegalArgumentException.class)
+    public void testZeroCashInATMThrowsIllegalArgumentException()  {
+      
+          double expectedMoney = 0.;
+          ATM atm = new ATM(expectedMoney);
+          double balance = atm.getMoneyInATM();
+          assertEquals(expectedMoney, balance, 0.01);
+
+    }
+    
 }
