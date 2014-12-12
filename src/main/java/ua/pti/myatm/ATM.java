@@ -11,6 +11,7 @@ public class ATM {
             throw new IllegalArgumentException();
         }
         else {
+            
             this.moneyInATM = moneyInATM;
             this.card = null;
         }

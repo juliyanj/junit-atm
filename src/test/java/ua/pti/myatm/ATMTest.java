@@ -16,27 +16,22 @@ public class ATMTest {
 
     @Test
     public void testGetMoneyInATMExpectedEquals() {
-        double actionMoney = 13.5;
-        ATM atm = new ATM(actionMoney);
+        double actualMoney = 13.5;
+        ATM atm = new ATM(actualMoney);
         double expectedResult = 13.5;
-        assertEquals(atm.getMoneyInATM(), expectedResult, 0.0);
+        assertEquals(atm.getMoneyInATM(), expectedResult, 0.01);
     }
 
 
 
     @Test
     public void testGetMoneyInATMExpectedNotEquals() {
-        double actionMoney = 13.5;
-        ATM atm = new ATM(actionMoney);
+        double actualMoney = 13.5;
+        ATM atm = new ATM(actualMoney);
         double expectedResult = 53.1;
-        assertNotEquals(atm.getMoneyInATM(), expectedResult, 0.0);
+        assertNotEquals(atm.getMoneyInATM(), expectedResult, 0.01);
     }
 
-    @Test (expected = NullPointerException.class)
-    public void testValidateCardForNullCardThrowsIllegalArgumentException() {
-        ATM atm = new ATM(1);
-        atm.validateCard(null,1);
-    }
 
     @Test
     public void testValidateCardForBlockedCard() {
@@ -47,6 +42,7 @@ public class ATMTest {
 
         assertEquals(result,false);
     }
+    
     @Test
      public void testValidateCardForCardAccepted() {
         ATM atm = new ATM(1);
@@ -61,7 +57,7 @@ public class ATMTest {
 
 
     @Test (expected = NoCardInserted.class)
-    public void testCheckBalanceForNullCardThrowsNoCardInsertion() throws NoCardInserted {
+    public void testCheckBalanceForNullCardThrowsNoCardInserted() throws NoCardInserted {
         ATM atm = new ATM(1);
 
         atm.checkBalance();
@@ -82,7 +78,7 @@ public class ATMTest {
         when(card.checkPin(pinCode)).thenReturn(true);
          atm.validateCard(card,pinCode);
         double expectedResult = 123;
-            assertEquals(atm.checkBalance(),expectedResult,0.0);
+            assertEquals(atm.checkBalance(),expectedResult,0.01);
 
     }
 
@@ -100,14 +96,14 @@ public class ATMTest {
         when(card.checkPin(pinCode)).thenReturn(true);
          atm.validateCard(card,pinCode);
         double expectedResult = 321;
-        assertNotEquals(atm.checkBalance(), expectedResult, 0.0);
+        assertNotEquals(atm.checkBalance(), expectedResult, 0.01);
 
     }
 
     @Test (expected = NoCardInserted.class)
       public void testGetCashForNullCardThrowsNoCardInserted() throws NoCardInserted, NotEnoughMoneyInATM, NotEnoughMoneyInAccount {
         ATM atm = new ATM(321);
-        double amount =123;
+        double amount = 123;
         assertNull(atm.getCash(amount));
 
     }
@@ -115,8 +111,8 @@ public class ATMTest {
     @Test (expected = NotEnoughMoneyInAccount.class)
     public void testGetCashThrowsNotEnoughMoneyInAccount() throws NoCardInserted, NotEnoughMoneyInATM, NotEnoughMoneyInAccount {
 
-        double amount =132;
-        ATM atm = new ATM(1);
+        double amount = 132;
+        ATM atm = new ATM(123);
 
         Card card = mock(Card.class);
         int pinCode = 0000;
@@ -152,29 +148,30 @@ public class ATMTest {
     public void testGetCashBalanceCheckBalanceOnceAtLeast() throws NoCardInserted, NotEnoughMoneyInATM, NotEnoughMoneyInAccount {
 
         double amount = 321;
-        ATM atm = new ATM(10000);
+        ATM atm = new ATM(1000);
         Card card = mock(Card.class);
         int pinCode = 0000;
         Account account = mock(Account.class);
-        double actualValue = 10000;
-        when(account.getBalance()).thenReturn(actualValue);
-        when(card.getAccount()).thenReturn(account);
+        double actualValue = 1000;
         when(card.isBlocked()).thenReturn(false);
         when(card.checkPin(pinCode)).thenReturn(true);
-         atm.validateCard(card,pinCode);
+        when(card.getAccount()).thenReturn(account);
+        when(account.getBalance()).thenReturn(actualValue);
+        atm.validateCard(card,pinCode);
         atm.getCash(amount);
         verify(account, atLeastOnce()).getBalance();
+       
     }
 
     @Test
     public void testGetCashBalanceOrderForGetBalanceBeforeWithDraw() throws NoCardInserted, NotEnoughMoneyInATM, NotEnoughMoneyInAccount {
 
         double amount = 321;
-        ATM atm = new ATM(10000);
+        ATM atm = new ATM(1000);
         Card card = mock(Card.class);
         int pinCode = 0000;
         Account account = mock(Account.class);
-        double actualValue = 10000;
+        double actualValue = 1000;
         when(account.getBalance()).thenReturn(actualValue);
         when(card.getAccount()).thenReturn(account);
         when(card.isBlocked()).thenReturn(false);
