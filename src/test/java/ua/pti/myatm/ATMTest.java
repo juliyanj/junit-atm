@@ -37,22 +37,25 @@ public class ATMTest {
     public void testValidateCardForBlockedCard() {
         ATM atm = new ATM(1);
         Card card = mock(Card.class);
-        when(card.isBlocked()).thenReturn(true);
-        boolean result = atm.validateCard(card,1);
-
-        assertEquals(result,false);
-    }
-    
-    @Test
-     public void testValidateCardForCardAccepted() {
-        ATM atm = new ATM(1);
-        Card card = mock(Card.class);
-        int pinCode = 0000;
-        when(card.isBlocked()).thenReturn(false);
+        int pinCode = 1890;
         when(card.checkPin(pinCode)).thenReturn(true);
+        when(card.isBlocked()).thenReturn(true);
         boolean result = atm.validateCard(card,pinCode);
 
-        assertEquals(result, true);
+        assertFalse(result);
+    }
+    
+    
+    @Test
+     public void testValidateCardIfPinFailed() {
+        ATM atm = new ATM(1);
+        Card card = mock(Card.class);
+        int pinCode = 1890;
+        when(card.isBlocked()).thenReturn(false);
+        when(card.checkPin(pinCode)).thenReturn(false);
+        boolean result = atm.validateCard(card, pinCode);
+
+        assertFalse(result);
     }
 
 
@@ -65,34 +68,34 @@ public class ATMTest {
     }
 
     @Test
-    public void testCheckBalanceExcpectedAllRight() throws NoCardInserted {
+    public void testCheckBalanceExcpectedGoodResult() throws NoCardInserted {
         ATM atm = new ATM(1);
 
         Card card = mock(Card.class);
-        int pinCode = 0000;
+        int pinCode = 1890;
         Account account = mock(Account.class);
         double actualValue = 123;
-        when(account.getBalance()).thenReturn(actualValue);
-        when(card.getAccount()).thenReturn(account);
         when(card.isBlocked()).thenReturn(false);
         when(card.checkPin(pinCode)).thenReturn(true);
-         atm.validateCard(card,pinCode);
+        when(card.getAccount()).thenReturn(account);
+        when(account.getBalance()).thenReturn(actualValue);
+        atm.validateCard(card,pinCode);
         double expectedResult = 123;
             assertEquals(atm.checkBalance(),expectedResult,0.01);
 
     }
 
-    @Test
+    @Test(expected = NoCardInsertedException.class)
       public void testCheckBalanceOtherResult() throws NoCardInserted {
         ATM atm = new ATM(1);
 
         Card card = mock(Card.class);
-        int pinCode = 0000;
+        int pinCode = 1890;
         Account account = mock(Account.class);
         double actualValue = 1000;
         when(account.getBalance()).thenReturn(actualValue);
         when(card.getAccount()).thenReturn(account);
-        when(card.isBlocked()).thenReturn(false);
+        when(card.isBlocked()).thenReturn(true);
         when(card.checkPin(pinCode)).thenReturn(true);
          atm.validateCard(card,pinCode);
         double expectedResult = 321;
@@ -133,7 +136,7 @@ public class ATMTest {
         ATM atm = new ATM(1);
 
         Card card = mock(Card.class);
-        int pinCode = 0000;
+        int pinCode = 1890;
         Account account = mock(Account.class);
         double actualValue = 432;
         when(account.getBalance()).thenReturn(actualValue);
@@ -150,7 +153,7 @@ public class ATMTest {
         double amount = 321;
         ATM atm = new ATM(1000);
         Card card = mock(Card.class);
-        int pinCode = 0000;
+        int pinCode = 1890;
         Account account = mock(Account.class);
         double actualValue = 1000;
         when(card.isBlocked()).thenReturn(false);
@@ -164,12 +167,12 @@ public class ATMTest {
     }
 
     @Test
-    public void testGetCashBalanceOrderForGetBalanceBeforeWithDraw() throws NoCardInserted, NotEnoughMoneyInATM, NotEnoughMoneyInAccount {
+    public void testGetCashBalanceOrderIsBlockedBeforeWithDraw() throws NoCardInserted, NotEnoughMoneyInATM, NotEnoughMoneyInAccount {
 
         double amount = 321;
         ATM atm = new ATM(1000);
         Card card = mock(Card.class);
-        int pinCode = 0000;
+        int pinCode = 1890;
         Account account = mock(Account.class);
         double actualValue = 1000;
         when(account.getBalance()).thenReturn(actualValue);
