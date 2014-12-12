@@ -179,8 +179,8 @@ public class ATMTest {
         when(account.withdrow(amount)).thenReturn(amount);
         atm.validateCard(card, pinCode);
         atm.getCash(amount);
-        InOrder order = inOrder(account);
-        order.verify(account).getBalance();
+        InOrder order = inOrder(card,account);
+        order.verify(card).isBlocked();
         order.verify(account).withdrow(amount);
 
     }
